@@ -3,6 +3,10 @@ package com.cg.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.cg.enums.PaymentMethod;
+import com.cg.enums.PaymentStatus;
+import com.cg.enums.TransactionType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
