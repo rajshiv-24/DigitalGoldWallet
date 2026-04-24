@@ -19,7 +19,7 @@ public class Address {
     private String city;
     private String state;
     private String postalCode;
-    private String country;cm
+    private String country;
 
     public Integer getAddressId() {
 		return addressId;
