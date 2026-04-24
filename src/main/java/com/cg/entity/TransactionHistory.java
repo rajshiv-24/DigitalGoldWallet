@@ -32,10 +32,10 @@ public class TransactionHistory {
     @JoinColumn(name = "branch_id")
     private VendorBranch branch;
 
-   
+    @Enumerated(EnumType.STRING)
     private TransactionType2 transactionType;
 
-   
+    @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
 
     private BigDecimal quantity;
@@ -54,11 +54,11 @@ public class TransactionHistory {
 	public VendorBranch getBranch() {
 		return branch;
 	}
-	@Enumerated(EnumType.STRING)
+	
 	public TransactionType2 getTransactionType() {
 		return transactionType;
 	}
-	@Enumerated(EnumType.STRING)
+	
 	public TransactionStatus getTransactionStatus() {
 		return transactionStatus;
 	}
