@@ -1,6 +1,6 @@
 package com.cg.enums;
 
 public enum TransactionType {
-    CREDIT,
-    DEBIT
+    CREDITED_TO_WALLET,
+    DEBITED_FROM_WALLET
 }
