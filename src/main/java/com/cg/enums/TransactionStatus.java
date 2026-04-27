@@ -1,6 +1,8 @@
 package com.cg.enums;
 
 public enum TransactionStatus {
-    SUCCESS,
+    PENDING,
+    COMPLETED,
+    CANCELLED,
     FAILED
 }
