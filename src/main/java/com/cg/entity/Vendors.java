@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 
 @Entity
-public class Vendor {
+public class Vendors {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
