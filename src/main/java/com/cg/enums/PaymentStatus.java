@@ -2,5 +2,7 @@ package com.cg.enums;
 
 public enum PaymentStatus {
     SUCCESS,
-    FAILED
+    FAILED,
+    PENDING,
+    REFUNDED
 }
