@@ -1,7 +1,7 @@
 package com.cg.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.cg.entity.Vendor;
+import com.cg.entity.Vendors;
 
-public interface VendorRepository extends JpaRepository<Vendor, Integer> {
+public interface VendorRepository extends JpaRepository<Vendors, Integer> {
 }
