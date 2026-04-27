@@ -21,7 +21,7 @@ public class VendorBranch {
 
     @ManyToOne
     @JoinColumn(name = "vendor_id")
-    private Vendor vendor;
+    private Vendors vendor;
 
     @ManyToOne
     @JoinColumn(name = "address_id")
@@ -39,11 +39,11 @@ public class VendorBranch {
 		this.branchId = branchId;
 	}
 
-	public Vendor getVendor() {
+	public Vendors getVendor() {
 		return vendor;
 	}
 
-	public void setVendor(Vendor vendor) {
+	public void setVendor(Vendors vendor) {
 		this.vendor = vendor;
 	}
 
