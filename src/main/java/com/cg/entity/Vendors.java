@@ -2,6 +2,8 @@ package com.cg.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 
@@ -95,6 +97,7 @@ public class Vendors {
     private Double totalGoldQuantity;
     private Double currentGoldPrice;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "vendor")
     private List<VendorBranch> branches;
 }
