@@ -113,7 +113,7 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         history.setUser(user);
         history.setBranch(branch);
         history.setTransactionType(TransactionType2.BUY);
-        history.setTransactionStatus(TransactionStatus.COMPLETED);
+        history.setTransactionStatus(TransactionStatus.SUCCESS);
         history.setQuantity(quantity);
         history.setAmount(totalCost);
         history.setCreatedAt(LocalDateTime.now());
@@ -124,7 +124,7 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         payment.setUser(user);
         payment.setAmount(totalCost);
         payment.setPaymentMethod(request.getPaymentMethod());
-        payment.setTransactionType(TransactionType.DEBIT);
+        payment.setTransactionType(TransactionType.DEBITED_FROM_WALLET);
         payment.setPaymentStatus(PaymentStatus.SUCCESS);
         payment.setCreatedAt(LocalDateTime.now());
         paymentRepo.save(payment);
@@ -191,7 +191,7 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         history.setUser(user);
         history.setBranch(branch);
         history.setTransactionType(TransactionType2.SELL);
-        history.setTransactionStatus(TransactionStatus.COMPLETED);
+        history.setTransactionStatus(TransactionStatus.SUCCESS);
         history.setQuantity(quantity);
         history.setAmount(refundAmount);
         history.setCreatedAt(LocalDateTime.now());
@@ -202,7 +202,7 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         payment.setUser(user);
         payment.setAmount(refundAmount);
         payment.setPaymentMethod(PaymentMethod.BANK_TRANSFER); // default for sell
-        payment.setTransactionType(TransactionType.CREDIT);
+        payment.setTransactionType(TransactionType.CREDITED_TO_WALLET);
         payment.setPaymentStatus(PaymentStatus.SUCCESS);
         payment.setCreatedAt(LocalDateTime.now());
         paymentRepo.save(payment);
@@ -269,8 +269,8 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         TransactionHistory history = new TransactionHistory();
         history.setUser(user);
         history.setBranch(branch);
-        history.setTransactionType(TransactionType2.PHYSICAL_DELIVERY);
-        history.setTransactionStatus(TransactionStatus.COMPLETED);
+        history.setTransactionType(TransactionType2.CONVERT_TO_PHYSICAL);
+        history.setTransactionStatus(TransactionStatus.SUCCESS);
         history.setQuantity(quantity);
         history.setAmount(quantity.multiply(pricePerGram));
         history.setCreatedAt(LocalDateTime.now());
