@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
         payment.setUser(user);
         payment.setAmount(request.getAmount());
         payment.setPaymentMethod(request.getPaymentMethod());
-        payment.setTransactionType(TransactionType.CREDIT);  // money credited to wallet
+        payment.setTransactionType(TransactionType.CREDITED_TO_WALLET);  // money credited to wallet
         payment.setPaymentStatus(PaymentStatus.SUCCESS);
         payment.setCreatedAt(LocalDateTime.now());
         Payment saved = paymentRepo.save(payment);
