@@ -1,5 +1,7 @@
 package com.cg.dto;
 
+import com.cg.enums.Role;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -9,6 +11,7 @@ public class UserResponseDTO {
     private Integer userId;
     private String name;
     private String email;
+    private Role role;
     private BigDecimal balance;       
     private LocalDateTime createdAt;
 
@@ -27,6 +30,9 @@ public class UserResponseDTO {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
     public BigDecimal getBalance() { return balance; }
     public void setBalance(BigDecimal balance) { this.balance = balance; }
@@ -48,12 +54,13 @@ public class UserResponseDTO {
 
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
-	public UserResponseDTO(Integer userId, String name, String email, BigDecimal balance, LocalDateTime createdAt,
+	public UserResponseDTO(Integer userId, String name, String email, Role role, BigDecimal balance, LocalDateTime createdAt,
 			String street, String city, String state, String postalCode, String country) {
 		super();
 		this.userId = userId;
 		this.name = name;
 		this.email = email;
+		this.role = role;
 		this.balance = balance;
 		this.createdAt = createdAt;
 		this.street = street;
