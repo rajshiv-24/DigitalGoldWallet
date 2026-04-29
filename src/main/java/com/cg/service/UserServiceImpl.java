@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole() != null ? request.getRole() : Role.USER);
+        user.setRole(Role.USER);
         user.setAddress(address);
         user.setBalance(BigDecimal.ZERO);  // new users start with zero balance
         user.setCreatedAt(LocalDateTime.now());
@@ -100,10 +100,6 @@ public class UserServiceImpl implements UserService {
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
-
-        if (request.getRole() != null) {
-            user.setRole(request.getRole());
         }
 
         if (request.getAddressId() != null) {
