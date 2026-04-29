@@ -1,10 +1,13 @@
 package com.cg.dto;
 
+import com.cg.enums.Role;
 
 public class UserRequestDTO {
 
     private String name;        
     private String email;       
+    private String password;
+    private Role role;
     private Integer addressId;  
 
     public String getName() { return name; }
@@ -13,12 +16,20 @@ public class UserRequestDTO {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
     public Integer getAddressId() { return addressId; }
     public void setAddressId(Integer addressId) { this.addressId = addressId; }
-	public UserRequestDTO(String name, String email, Integer addressId) {
+	public UserRequestDTO(String name, String email, String password, Role role, Integer addressId) {
 		super();
 		this.name = name;
 		this.email = email;
+		this.password = password;
+		this.role = role;
 		this.addressId = addressId;
 	}
 	public UserRequestDTO() {
