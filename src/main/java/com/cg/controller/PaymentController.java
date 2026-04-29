@@ -8,6 +8,7 @@ import com.cg.enums.TransactionType;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.repo.PaymentRepository;
 import com.cg.service.PaymentService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -37,6 +38,7 @@ public class PaymentController {
     }
 
     @GetMapping("/by-user/{userId}")
+    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
     public List<PaymentResponseDTO> getPaymentsByUser(@PathVariable Integer userId) {
         return paymentService.getPaymentsByUser(userId);
     }
@@ -83,6 +85,7 @@ public class PaymentController {
     }
 
     @GetMapping("/by-user/{userId}/total")
+    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
     public Map<String, Object> getPaymentTotalByUser(@PathVariable Integer userId) {
         BigDecimal total = paymentRepository.findByUserUserId(userId).stream()
                 .map(Payment::getAmount)
