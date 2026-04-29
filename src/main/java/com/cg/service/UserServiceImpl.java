@@ -3,12 +3,14 @@ package com.cg.service;
 import com.cg.dto.*;
 import com.cg.entity.*;
 import com.cg.enums.PaymentStatus;
+import com.cg.enums.Role;
 import com.cg.enums.TransactionType;
 import com.cg.exception.DuplicateEmailException;
 import com.cg.exception.InsufficientBalanceException;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,11 +30,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PaymentRepository paymentRepo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // ──────────────────────────────────────────────────
     // CREATE USER
     // ──────────────────────────────────────────────────
     @Override
     public UserResponseDTO createUser(UserRequestDTO request) {
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
         // Check for duplicate email (users.email has unique constraint)
         userRepo.findByEmail(request.getEmail()).ifPresent(u -> {
             throw new DuplicateEmailException(
@@ -46,6 +55,8 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole() != null ? request.getRole() : Role.USER);
         user.setAddress(address);
         user.setBalance(BigDecimal.ZERO);  // new users start with zero balance
         user.setCreatedAt(LocalDateTime.now());
@@ -86,6 +97,14 @@ public class UserServiceImpl implements UserService {
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
+
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getRole() != null) {
+            user.setRole(request.getRole());
+        }
 
         if (request.getAddressId() != null) {
             Address address = addressRepo.findById(request.getAddressId())
@@ -148,6 +167,7 @@ public class UserServiceImpl implements UserService {
         dto.setUserId(user.getUserId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole() != null ? user.getRole() : Role.USER);
         dto.setBalance(user.getBalance());
         dto.setCreatedAt(user.getCreatedAt());
 
