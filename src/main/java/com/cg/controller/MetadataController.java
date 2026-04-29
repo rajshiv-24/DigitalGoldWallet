@@ -42,6 +42,6 @@ public class MetadataController {
 
     @GetMapping("/endpoints/count")
     public Map<String, Integer> getEndpointCount() {
-        return Map.of("implementedEndpoints", 77);
+        return Map.of("implementedEndpoints", 79);
     }
 }
