@@ -28,6 +28,16 @@ public class UserAccessService {
                 .orElse(false);
     }
 
+    public boolean canAccessOwnUser(Authentication authentication, Integer userId) {
+        if (authentication == null || !authentication.isAuthenticated() || userId == null) {
+            return false;
+        }
+
+        return userRepository.findByEmail(authentication.getName())
+                .map(user -> user.getUserId().equals(userId))
+                .orElse(false);
+    }
+
     private boolean hasAdminRole(Authentication authentication) {
         return authentication.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_" + Role.ADMIN.name()));

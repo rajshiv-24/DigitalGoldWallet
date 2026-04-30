@@ -38,7 +38,7 @@ public class PaymentController {
     }
 
     @GetMapping("/by-user/{userId}")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public List<PaymentResponseDTO> getPaymentsByUser(@PathVariable Integer userId) {
         return paymentService.getPaymentsByUser(userId);
     }
@@ -85,7 +85,7 @@ public class PaymentController {
     }
 
     @GetMapping("/by-user/{userId}/total")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public Map<String, Object> getPaymentTotalByUser(@PathVariable Integer userId) {
         BigDecimal total = paymentRepository.findByUserUserId(userId).stream()
                 .map(Payment::getAmount)
