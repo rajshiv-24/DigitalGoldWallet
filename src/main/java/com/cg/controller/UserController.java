@@ -27,10 +27,10 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
-    }
+//    @PostMapping
+//    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO request) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
+//    }
 
     @GetMapping
     public List<UserResponseDTO> getAllUsers() {

@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                         // ✅ PUBLIC — Registration flow (address needed before user)
                         .requestMatchers(HttpMethod.POST, "/api/addresses").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        //.requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
 
                         // 🔴 ADMIN — Admin namespace
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
