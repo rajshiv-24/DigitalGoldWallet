@@ -38,13 +38,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public UserResponseDTO getUserById(@PathVariable Integer userId) {
         return userService.getUserById(userId);
     }
 
     @PutMapping("/{userId}")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public UserResponseDTO updateUser(@PathVariable Integer userId, @RequestBody UserRequestDTO request) {
         return userService.updateUser(userId, request);
     }
@@ -56,13 +56,13 @@ public class UserController {
     }
 
     @PostMapping("/wallet/top-up")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #request.userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #request.userId)")
     public ResponseEntity<PaymentResponseDTO> topUpWallet(@RequestBody WalletTopUpRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.topUpWallet(request));
     }
 
     @GetMapping("/{userId}/balance")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public Map<String, Object> getWalletBalance(@PathVariable Integer userId) {
         UserResponseDTO user = userService.getUserById(userId);
         return Map.of("userId", user.getUserId(), "balance", user.getBalance());

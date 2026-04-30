@@ -39,38 +39,38 @@ public class GoldTransactionController {
     }
 
     @PostMapping("/buy")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #request.userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #request.userId)")
     public ResponseEntity<TransactionHistoryResponseDTO> buyGold(@RequestBody BuyGoldRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(goldTransactionService.buyGold(request));
     }
 
     @PostMapping("/sell")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #request.userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #request.userId)")
     public TransactionHistoryResponseDTO sellGold(@RequestBody SellGoldRequestDTO request) {
         return goldTransactionService.sellGold(request);
     }
 
     @PostMapping("/convert-to-physical")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #request.userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #request.userId)")
     public ResponseEntity<PhysicalGoldTransactionResponseDTO> convertToPhysical(
             @RequestBody ConvertToPhysicalRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(goldTransactionService.convertToPhysical(request));
     }
 
     @GetMapping("/holdings/by-user/{userId}")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public List<VirtualGoldHoldingResponseDTO> getHoldingsByUser(@PathVariable Integer userId) {
         return goldTransactionService.getHoldingsByUser(userId);
     }
 
     @GetMapping("/history/by-user/{userId}")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public List<TransactionHistoryResponseDTO> getTransactionHistoryByUser(@PathVariable Integer userId) {
         return goldTransactionService.getTransactionHistoryByUser(userId);
     }
 
     @GetMapping("/physical/by-user/{userId}")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public List<PhysicalGoldTransactionResponseDTO> getPhysicalTransactionsByUser(@PathVariable Integer userId) {
         return goldTransactionService.getPhysicalTransactionsByUser(userId);
     }
@@ -115,7 +115,7 @@ public class GoldTransactionController {
     }
 
     @GetMapping("/holdings/by-user/{userId}/total")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public Map<String, Object> getTotalHoldingByUser(@PathVariable Integer userId) {
         BigDecimal total = holdingRepository.findByUserUserId(userId).stream()
                 .map(VirtualGoldHolding::getQuantity)
@@ -143,7 +143,7 @@ public class GoldTransactionController {
     }
 
     @GetMapping("/summary/by-user/{userId}")
-    @PreAuthorize("@userAccessService.canAccessUser(authentication, #userId)")
+    @PreAuthorize("@userAccessService.canAccessOwnUser(authentication, #userId)")
     public Map<String, Object> getGoldSummaryByUser(@PathVariable Integer userId) {
         return Map.of(
                 "userId", userId,
