@@ -1,5 +1,7 @@
 package com.cg.test.service;
 
+
+
 import com.cg.dto.VendorBranchRequestDTO;
 import com.cg.entity.Address;
 import com.cg.entity.VendorBranch;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
-public class VendorBranchServiceImplTest {
+public class VendorBranchServiceTest {
 
     @MockitoBean
     private VendorBranchRepository branchRepo;
