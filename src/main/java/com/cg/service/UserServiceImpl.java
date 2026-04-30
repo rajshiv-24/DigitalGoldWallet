@@ -1,22 +1,33 @@
 package com.cg.service;
 
-import com.cg.dto.*;
-import com.cg.entity.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.cg.dto.PaymentResponseDTO;
+import com.cg.dto.UserRequestDTO;
+import com.cg.dto.UserResponseDTO;
+import com.cg.dto.WalletTopUpRequestDTO;
+import com.cg.entity.Address;
+import com.cg.entity.Payment;
+import com.cg.entity.User;
 import com.cg.enums.PaymentStatus;
 import com.cg.enums.Role;
 import com.cg.enums.TransactionType;
 import com.cg.exception.DuplicateEmailException;
 import com.cg.exception.InsufficientBalanceException;
 import com.cg.exception.ResourceNotFoundException;
-import com.cg.repo.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.cg.repo.AddressRepository;
+import com.cg.repo.PaymentRepository;
+import com.cg.repo.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -130,6 +141,20 @@ public class UserServiceImpl implements UserService {
     // ──────────────────────────────────────────────────
     @Override
     public PaymentResponseDTO topUpWallet(WalletTopUpRequestDTO request) {
+
+        // 🔒 Get logged-in user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User loggedInUser = userRepo.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Logged-in user not found"));
+
+        // ❌ BLOCK if user tries another user's wallet
+        if (!loggedInUser.getUserId().equals(request.getUserId())) {
+            throw new AccessDeniedException("You can only top up your own wallet");
+        }
+
+        // ✅ Now safe to proceed
         User user = userRepo.findById(request.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found with id: " + request.getUserId()));
@@ -138,18 +163,17 @@ public class UserServiceImpl implements UserService {
             throw new InsufficientBalanceException("Top-up amount must be greater than zero");
         }
 
-        // Credit the wallet
         user.setBalance(user.getBalance().add(request.getAmount()));
         userRepo.save(user);
 
-        // Record payment entry
         Payment payment = new Payment();
         payment.setUser(user);
         payment.setAmount(request.getAmount());
         payment.setPaymentMethod(request.getPaymentMethod());
-        payment.setTransactionType(TransactionType.CREDITED_TO_WALLET);  // money credited to wallet
+        payment.setTransactionType(TransactionType.CREDITED_TO_WALLET);
         payment.setPaymentStatus(PaymentStatus.SUCCESS);
         payment.setCreatedAt(LocalDateTime.now());
+
         Payment saved = paymentRepo.save(payment);
 
         return toPaymentResponseDTO(saved);
