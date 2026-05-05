@@ -16,7 +16,10 @@ import com.cg.exception.InsufficientBalanceException;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.repo.AddressRepository;
 import com.cg.repo.PaymentRepository;
+import com.cg.repo.PhysicalGoldTransactionRepository;
+import com.cg.repo.TransactionHistoryRepository;
 import com.cg.repo.UserRepository;
+import com.cg.repo.VirtualGoldHoldingRepository;
 import com.cg.service.UserService;
 
 import org.junit.jupiter.api.Assertions;
@@ -47,6 +50,15 @@ public class UserServiceTest {
 
     @MockitoBean
     private PaymentRepository paymentRepo;
+
+    @MockitoBean
+    private TransactionHistoryRepository transactionHistoryRepo;
+
+    @MockitoBean
+    private PhysicalGoldTransactionRepository physicalGoldTransactionRepo;
+
+    @MockitoBean
+    private VirtualGoldHoldingRepository virtualGoldHoldingRepo;
 
     @MockitoBean
     private PasswordEncoder passwordEncoder;
@@ -217,6 +229,10 @@ public class UserServiceTest {
         Assertions.assertDoesNotThrow(() -> userService.deleteUser(1));
 
         Mockito.verify(userRepo).findById(1);
+        Mockito.verify(physicalGoldTransactionRepo).deleteByUserId(1);
+        Mockito.verify(transactionHistoryRepo).deleteByUserId(1);
+        Mockito.verify(virtualGoldHoldingRepo).deleteByUserId(1);
+        Mockito.verify(paymentRepo).deleteByUserId(1);
         Mockito.verify(userRepo).deleteById(1);
     }
 
@@ -227,6 +243,10 @@ public class UserServiceTest {
         Assertions.assertThrows(ResourceNotFoundException.class,
                 () -> userService.deleteUser(99));
 
+        Mockito.verify(physicalGoldTransactionRepo, Mockito.never()).deleteByUserId(Mockito.any());
+        Mockito.verify(transactionHistoryRepo, Mockito.never()).deleteByUserId(Mockito.any());
+        Mockito.verify(virtualGoldHoldingRepo, Mockito.never()).deleteByUserId(Mockito.any());
+        Mockito.verify(paymentRepo, Mockito.never()).deleteByUserId(Mockito.any());
         Mockito.verify(userRepo, Mockito.never()).deleteById(Mockito.any());
     }
 

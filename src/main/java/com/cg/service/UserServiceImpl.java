@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cg.dto.PaymentResponseDTO;
 import com.cg.dto.UserRequestDTO;
@@ -27,7 +28,10 @@ import com.cg.exception.InsufficientBalanceException;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.repo.AddressRepository;
 import com.cg.repo.PaymentRepository;
+import com.cg.repo.PhysicalGoldTransactionRepository;
+import com.cg.repo.TransactionHistoryRepository;
 import com.cg.repo.UserRepository;
+import com.cg.repo.VirtualGoldHoldingRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -40,6 +44,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PaymentRepository paymentRepo;
+
+    @Autowired
+    private TransactionHistoryRepository transactionHistoryRepo;
+
+    @Autowired
+    private PhysicalGoldTransactionRepository physicalGoldTransactionRepo;
+
+    @Autowired
+    private VirtualGoldHoldingRepository virtualGoldHoldingRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -127,10 +140,17 @@ public class UserServiceImpl implements UserService {
     // DELETE USER
     // ──────────────────────────────────────────────────
     @Override
+    @Transactional
     public void deleteUser(Integer userId) {
         userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found with id: " + userId));
+
+        physicalGoldTransactionRepo.deleteByUserId(userId);
+        transactionHistoryRepo.deleteByUserId(userId);
+        virtualGoldHoldingRepo.deleteByUserId(userId);
+        paymentRepo.deleteByUserId(userId);
+
         userRepo.deleteById(userId);
     }
 

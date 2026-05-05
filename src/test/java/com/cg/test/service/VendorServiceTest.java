@@ -65,6 +65,28 @@ public class VendorServiceTest {
         Mockito.verify(vendorRepo).save(Mockito.any(Vendors.class));
     }
 
+    @Test
+    public void testCreateVendor_DefaultsMissingQuantity() {
+        requestDTO.setTotalGoldQuantity(null);
+        Mockito.when(vendorRepo.save(Mockito.any(Vendors.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Vendors result = vendorService.createVendor(requestDTO);
+
+        Assertions.assertEquals(0.0, result.getTotalGoldQuantity());
+        Assertions.assertEquals(6200.0, result.getCurrentGoldPrice());
+    }
+
+    @Test
+    public void testCreateVendor_NameRequired() {
+        requestDTO.setVendorName(" ");
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> vendorService.createVendor(requestDTO));
+
+        Mockito.verify(vendorRepo, Mockito.never()).save(Mockito.any());
+    }
+
     // ── getVendorById ──────────────────────────────────────────
 
     @Test
