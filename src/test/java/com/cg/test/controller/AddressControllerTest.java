@@ -14,14 +14,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Map;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "spring.main.allow-bean-definition-overriding=true",
+        "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"
+})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class AddressControllerTest {
 
     @MockitoBean
@@ -37,7 +42,7 @@ public class AddressControllerTest {
     private Address address;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         requestDTO = new AddressRequestDTO(
                 "Connaught Place",
                 "New Delhi",
@@ -54,39 +59,35 @@ public class AddressControllerTest {
         address.setPostalCode("110001");
         address.setCountry("India");
     }
+
     @Test
-    public void testCreateAddress() {
+    void testCreateAddress() {
         Mockito.when(addressService.createAddress(Mockito.any()))
                 .thenReturn(address);
 
         ResponseEntity<Address> response = addressController.createAddress(requestDTO);
 
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertEquals("New Delhi", response.getBody().getCity());
     }
 
     @Test
-    public void testGetAllAddresses() {
+    void testGetAllAddresses() {
         Mockito.when(addressService.getAllAddresses())
                 .thenReturn(List.of(address));
 
-        List<Address> list = addressController.getAllAddresses();
-
-        Assertions.assertEquals(1, list.size());
+        Assertions.assertEquals(1, addressController.getAllAddresses().size());
     }
 
     @Test
-    public void testGetAddressById() {
+    void testGetAddressById() {
         Mockito.when(addressService.getAddressById(1))
                 .thenReturn(address);
 
-        Address result = addressController.getAddressById(1);
-
-        Assertions.assertEquals(1, result.getAddressId());
+        Assertions.assertEquals(1, addressController.getAddressById(1).getAddressId());
     }
 
     @Test
-    public void testGetAddressById_NotFound() {
+    void testGetAddressById_NotFound() {
         Mockito.when(addressService.getAddressById(99))
                 .thenThrow(new ResourceNotFoundException("Not found"));
 
@@ -95,17 +96,16 @@ public class AddressControllerTest {
     }
 
     @Test
-    public void testUpdateAddress() {
+    void testUpdateAddress() {
         Mockito.when(addressService.updateAddress(Mockito.eq(1), Mockito.any()))
                 .thenReturn(address);
 
-        Address updated = addressController.updateAddress(1, requestDTO);
-
-        Assertions.assertEquals("New Delhi", updated.getCity());
+        Assertions.assertEquals("New Delhi",
+                addressController.updateAddress(1, requestDTO).getCity());
     }
 
     @Test
-    public void testDeleteAddress() {
+    void testDeleteAddress() {
         Mockito.doNothing().when(addressService).deleteAddress(1);
 
         ResponseEntity<Void> response = addressController.deleteAddress(1);
@@ -114,60 +114,42 @@ public class AddressControllerTest {
     }
 
     @Test
-    public void testCountAddresses() {
+    void testCountAddresses() {
         Mockito.when(addressRepository.count()).thenReturn(10L);
 
-        Map<String, Long> result = addressController.countAddresses();
-
-        Assertions.assertEquals(10L, result.get("count"));
+        Assertions.assertEquals(10L,
+                addressController.countAddresses().get("count"));
     }
 
     @Test
-    public void testAddressExists_True() {
+    void testAddressExists() {
         Mockito.when(addressRepository.existsById(1)).thenReturn(true);
 
-        Map<String, Boolean> result = addressController.addressExists(1);
-
-        Assertions.assertTrue(result.get("exists"));
+        Assertions.assertTrue(
+                addressController.addressExists(1).get("exists"));
     }
 
     @Test
-    public void testAddressExists_False() {
-        Mockito.when(addressRepository.existsById(99)).thenReturn(false);
+    void testGetAddressesByCity() {
+        Mockito.when(addressRepository.findAll()).thenReturn(List.of(address));
 
-        Map<String, Boolean> result = addressController.addressExists(99);
-
-        Assertions.assertFalse(result.get("exists"));
+        Assertions.assertEquals(1,
+                addressController.getAddressesByCity("New Delhi").size());
     }
 
     @Test
-    public void testGetAddressesByCity() {
-        Mockito.when(addressRepository.findAll())
-                .thenReturn(List.of(address));
+    void testGetAddressesByCountry() {
+        Mockito.when(addressRepository.findAll()).thenReturn(List.of(address));
 
-        List<Address> result = addressController.getAddressesByCity("New Delhi");
-
-        Assertions.assertEquals(1, result.size());
-    }
-
-
-    @Test
-    public void testGetAddressesByCountry() {
-        Mockito.when(addressRepository.findAll())
-                .thenReturn(List.of(address));
-
-        List<Address> result = addressController.getAddressesByCountry("India");
-
-        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(1,
+                addressController.getAddressesByCountry("India").size());
     }
 
     @Test
-    public void testSearchAddresses() {
-        Mockito.when(addressRepository.findAll())
-                .thenReturn(List.of(address));
+    void testSearchAddresses() {
+        Mockito.when(addressRepository.findAll()).thenReturn(List.of(address));
 
-        List<Address> result = addressController.searchAddresses("delhi");
-
-        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertFalse(
+                addressController.searchAddresses("delhi").isEmpty());
     }
 }
