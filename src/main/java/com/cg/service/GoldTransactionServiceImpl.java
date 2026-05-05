@@ -39,18 +39,7 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
     @Autowired
     private AddressRepository addressRepo;
 
-    // ──────────────────────────────────────────────────
-    // BUY GOLD
-    // 1. Validate user, branch exist
-    // 2. Calculate cost = quantity × branch.vendor.currentGoldPrice
-    // 3. Check user.balance >= cost (InsufficientBalanceException)
-    // 4. Check branch.quantity >= requested quantity (InsufficientGoldException)
-    // 5. Deduct cost from user.balance
-    // 6. Deduct quantity from branch.quantity (vendor branch stock)
-    // 7. Add/update VirtualGoldHolding for this user+branch
-    // 8. Record in transaction_history (BUY, COMPLETED)
-    // 9. Record in payments (DEBIT, SUCCESS)
-    // ──────────────────────────────────────────────────
+   
     @Override
     @Transactional
     public TransactionHistoryResponseDTO buyGold(BuyGoldRequestDTO request) {
@@ -119,7 +108,6 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         history.setCreatedAt(LocalDateTime.now());
         TransactionHistory savedHistory = historyRepo.save(history);
 
-        // Record in payments (DEBIT — money left wallet)
         Payment payment = new Payment();
         payment.setUser(user);
         payment.setAmount(totalCost);
@@ -132,18 +120,6 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         return toHistoryDTO(savedHistory);
     }
 
-    // ──────────────────────────────────────────────────
-    // SELL GOLD
-    // 1. Validate user, branch exist
-    // 2. Find user's holding at this branch
-    // 3. Check holding.quantity >= requested quantity (InsufficientGoldException)
-    // 4. Calculate refund = quantity × currentGoldPrice
-    // 5. Deduct from holding (or remove if zero)
-    // 6. Add stock back to branch
-    // 7. Credit INR to user.balance
-    // 8. Record in transaction_history (SELL, COMPLETED)
-    // 9. Record in payments (CREDIT, SUCCESS)
-    // ──────────────────────────────────────────────────
     @Override
     @Transactional
     public TransactionHistoryResponseDTO sellGold(SellGoldRequestDTO request) {
@@ -210,16 +186,7 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         return toHistoryDTO(savedHistory);
     }
 
-    // ──────────────────────────────────────────────────
-    // CONVERT TO PHYSICAL DELIVERY
-    // 1. Validate user, branch, deliveryAddress exist
-    // 2. Find user's holding at this branch
-    // 3. Check holding.quantity >= requested quantity (InsufficientGoldException)
-    // 4. Deduct from virtual_gold_holdings
-    // 5. Insert into physical_gold_transactions
-    // 6. Record in transaction_history (PHYSICAL_DELIVERY, COMPLETED)
-    // NOTE: No payment record here — gold is already paid for when buying
-    // ──────────────────────────────────────────────────
+    
     @Override
     @Transactional
     public PhysicalGoldTransactionResponseDTO convertToPhysical(ConvertToPhysicalRequestDTO request) {
@@ -279,9 +246,7 @@ public class GoldTransactionServiceImpl implements GoldTransactionService {
         return toPhysicalDTO(savedPhysical);
     }
 
-    // ──────────────────────────────────────────────────
-    // READ METHODS
-    // ──────────────────────────────────────────────────
+
     @Override
     public List<VirtualGoldHoldingResponseDTO> getHoldingsByUser(Integer userId) {
         return holdingRepo.findByUserUserId(userId)

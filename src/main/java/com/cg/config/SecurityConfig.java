@@ -41,37 +41,37 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // ✅ PUBLIC — Swagger
+                        // Swagger
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
 
-                        // ✅ PUBLIC — Auth (login/register)
+                        //Auth (login/register)
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // ✅ PUBLIC — Registration flow (address needed before user)
+                        // Registration flow (address needed before user)
                         .requestMatchers(HttpMethod.POST, "/api/addresses").permitAll()
                         //.requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
 
-                        // 🔴 ADMIN — Admin namespace
+                        //Admin namespace
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // 🔴 ADMIN — User management
+                        //User management
                         .requestMatchers(HttpMethod.GET,    "/api/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,    "/api/users/count").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,    "/api/users/by-email").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,    "/api/users/*/exists").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/*").hasRole("ADMIN")
 
-                        // 🔵 AUTHENTICATED — Own user profile
+                        // user profile
                         .requestMatchers(HttpMethod.GET,  "/api/users/*").authenticated()
                         .requestMatchers(HttpMethod.PUT,  "/api/users/*").authenticated()
                         .requestMatchers(HttpMethod.GET,  "/api/users/*/balance").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/users/wallet/top-up").authenticated()
 
-                        // 🔵 AUTHENTICATED — Gold transactions (own data only)
+                        //Gold transactions (own data only)
                         .requestMatchers(HttpMethod.POST, "/api/gold/buy").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/gold/sell").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/gold/convert-to-physical").authenticated()
@@ -81,17 +81,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,  "/api/gold/physical/by-user/*").authenticated()
                         .requestMatchers(HttpMethod.GET,  "/api/gold/summary/by-user/*").authenticated()
 
-                        // 🔴 ADMIN — Gold aggregate views
+                        //Gold aggregate views
                         .requestMatchers(HttpMethod.GET, "/api/gold/**").hasRole("ADMIN")
 
-                        // 🔵 AUTHENTICATED — Own payments
+                        //Own payments
                         .requestMatchers(HttpMethod.GET, "/api/payments/by-user/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/payments/by-user/*/total").authenticated()
 
-                        // 🔴 ADMIN — All payments aggregate views
+                        //All payments aggregate views
                         .requestMatchers(HttpMethod.GET, "/api/payments/**").hasRole("ADMIN")
 
-                        // 🔴 ADMIN — Vendor sensitive endpoints
+                        //Vendor endpoints
                         .requestMatchers(HttpMethod.GET,    "/api/vendors/count").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,    "/api/vendors/by-email").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,    "/api/vendors/*/exists").hasRole("ADMIN")
@@ -99,24 +99,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,    "/api/vendors/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/vendors/*").hasRole("ADMIN")
 
-                        // 🔵 AUTHENTICATED — Vendor browsing
+                        // 🔵 AUTHENTICATED Vendor 
                         .requestMatchers(HttpMethod.GET, "/api/vendors/by-name").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/vendors").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/vendors/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/vendors/*/price").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/vendors/*/branches").authenticated()
 
-                        // 🔴 ADMIN — Remaining vendor wildcard fallback
+                        // ADMIN Remaining vendor
                         .requestMatchers(HttpMethod.GET, "/api/vendors/**").hasRole("ADMIN")
 
-                        // 🔴 ADMIN — Branch sensitive endpoints
+                        // ADMIN Branch  endpoints
                         .requestMatchers(HttpMethod.GET,    "/api/branches/count").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,    "/api/branches/*/exists").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,   "/api/branches").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,    "/api/branches/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/branches/*").hasRole("ADMIN")
 
-                        // 🔵 AUTHENTICATED — Branch browsing
+                        // AUTHENTICATED Branch browsing
                         .requestMatchers(HttpMethod.GET, "/api/branches/by-vendor/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/branches/by-city").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/branches/with-min-quantity").authenticated()
@@ -124,28 +124,28 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/branches/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/branches/*/stock").authenticated()
 
-                        // 🔴 ADMIN — Remaining branch wildcard fallback
+                        // ADMIN Remaining branch wildcard fallback
                         .requestMatchers(HttpMethod.GET, "/api/branches/**").hasRole("ADMIN")
 
-                        // 🔴 ADMIN — Addresses (personal location data)
+                        // ADMIN Addresses (personal location data)
                         .requestMatchers(HttpMethod.GET,    "/api/addresses/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,    "/api/addresses/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/addresses/*").hasRole("ADMIN")
 
-                        // 🔴 ADMIN — Metadata system count
+                        // ADMIN Metadata system count
                         .requestMatchers(HttpMethod.GET, "/api/metadata/endpoints/count").hasRole("ADMIN")
 
-                        // 🔵 AUTHENTICATED — Metadata enums (needed for forms)
+                        // AUTHENTICATED Metadata enums (needed for forms)
                         .requestMatchers(HttpMethod.GET, "/api/metadata/**").authenticated()
 
-                        // 🔐 Fallback
+                        // Fallback
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
 
                 .authenticationProvider(authenticationProvider())
 
-                // ✅ JWT filter replaces httpBasic
+                // JWT filter replaces httpBasic
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .build();

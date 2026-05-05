@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-// Centralized exception handling for the whole application.
-// All controller exceptions are caught here and returned as structured JSON.
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

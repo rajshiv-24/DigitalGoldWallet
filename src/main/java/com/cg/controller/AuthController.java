@@ -26,16 +26,16 @@ public class AuthController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;                   // ← ADDED
+    private final JwtService jwtService;                   
 
     public AuthController(UserService userService,
                           UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          JwtService jwtService) {         // ← ADDED
+                          JwtService jwtService) {         
         this.userService = userService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;                      // ← ADDED
+        this.jwtService = jwtService;                      
     }
 
     @PostMapping("/register")

@@ -45,7 +45,7 @@ public class VendorControllerTest {
     @BeforeEach
     public void setUp() {
         vendor = new Vendors();
-        vendor.setVendorId(1L);   // ✅ FIXED (Integer)
+        vendor.setVendorId(1L);  
         vendor.setVendorName("Gold Palace");
         vendor.setDescription("Trusted Gold Dealer");
         vendor.setContactPersonName("Amit Jain");
